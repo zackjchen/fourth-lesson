@@ -27,6 +27,8 @@ impl Add for Tuple {
 
 
 fn main() {
+
+    // 第一种方法
     let mut arr = vec![];
     arr.push(Int(-2));
     arr.push(Str("Hello".into()));
@@ -42,4 +44,54 @@ fn main() {
         }
     }
     println!("{:?}",arr);
+
+    // 第二种方法
+    let dog = Dog{name: "旺财".into()};
+    let cat = Cat{name: "咪咪".into()};
+    let bird = Bird{name: "小明".into()};
+
+    let mut arr2:Vec<&dyn Animal> = vec![&dog,&cat, &bird];
+    for animal in arr2 {
+        animal.action()
+    }
+
+    // 区别：
+    // 第一种方法的数据拥有所有权，第二种需要引用，存放的应该是指针，不是引用的话大小不确定   
 }
+
+
+trait Animal {
+    fn action(&self);
+}
+
+struct Cat{
+    name: String,
+}
+
+struct Dog {
+    name: String,
+}
+
+struct Bird{
+    name: String,
+}
+impl Animal for Cat {
+    fn action(&self) {
+        println!("猫猫{:?}抓老鼠",self.name)
+    }
+
+}
+
+impl Animal for Dog {
+    fn action(&self) {
+        println!("狗狗{:?}会看家",self.name)
+    }
+
+}
+
+impl Animal for Bird {
+    fn action(&self) {
+        println!("这只鸟儿不会飞")
+    }
+}
+
