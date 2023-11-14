@@ -1,47 +1,40 @@
 use std::fmt::Debug;
-use std::ops::{Add, Deref};
-use std::process::Output;
+use std::ops::Add;
 
-#[derive(Debug,Clone,Default)]
+#[derive(Debug)]
 struct Tuple2{
-    var1: i32,
-    var2: i32,
+    val1: i32,
+    val2: i32
 }
 
-impl Add for Tuple2 {
+trait Add2<Rhs = Self>{
+    type Output;
+    fn add(&self, rhs: Rhs)-> Self::Output;
+}
+impl Add2 for Tuple2{
     type Output = Tuple2;
-    fn add(self, rhs: Self) -> Tuple2 {
-        let var1 = self.var1 + rhs.var1;
-        let var2 = self.var2 + rhs.var2;
-        Self::Output{var1, var2}
+
+    fn add(&self, rhs: Self) -> Self::Output {
+        let val1 = self.val1+rhs.val1;
+        let val2 = self.val2+rhs.val2;
+        Self::Output{val1,val2}
     }
 }
-#[derive(Debug,Clone,Default)]
-struct Tuple3{
-    var1: i32,
-    var2: i32,
-    var3: i32
-}
-
-impl Add for Tuple3 {
-    type Output = Tuple3;
-    fn add(self, rhs: Self) -> Tuple3 {
-        let var1 = self.var1 + rhs.var1;
-        let var2 = self.var2 + rhs.var2;
-        let var3 = self.var3 + rhs.var3;
-        Self::Output{var1, var2, var3}
-    }
-}
-
 
 fn main() {
-    let a = Tuple2{var1:1,var2:4};
-    // let b = Tuple2{var1:2,var2:5};
-    let res = func(a);
-    println!("{:?}",res)
+    let a = Tuple2{val1:1, val2:2};
+    let b = Tuple2{val1:3, val2:4};
+
+    // let adder: &dyn Add2<Tuple2,Output=Tuple2> = &a;
+    // let adder: Box<dyn Add2<Tuple2,Output=Tuple2>> = Box::new(a);
+    // let c = adder.add(b);
+
+    let c = test::<Tuple2>(&a, b);
+    println!("{:?}",c)
 }
 
-fn func<T>(data: Box<dyn Add<T,Output:T>>){
-    // 想知道怎么获取trait对象的数据类型
-    println!("{:?}",data)
+fn test<T:Debug>(a:&dyn Add2<T,Output=T>, b:T) -> T{
+    let c = a.add(b);
+    c
 }
+
